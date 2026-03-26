@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Support - Simple App Shipper</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro', sans-serif; background: #0f0f23; color: #d0d0e0; line-height: 1.8; }
+        .container { max-width: 700px; margin: 0 auto; padding: 60px 20px; }
+        h1 { font-size: 2em; margin-bottom: 24px; color: #e0e0ff; }
+        h2 { font-size: 1.2em; margin: 28px 0 12px; color: #c0c8ff; }
+        p { color: #a0a8c0; margin-bottom: 12px; }
+        a { color: #8890c0; }
+        .back { display: inline-block; margin-bottom: 24px; color: #8890c0; text-decoration: none; }
+        .faq { background: #1a1a3e; border: 1px solid #2a2a5e; border-radius: 12px; padding: 20px; margin-bottom: 16px; }
+        .faq h3 { color: #c0c8ff; margin-bottom: 8px; font-size: 1em; }
+        .faq p { margin-bottom: 0; }
+        .contact-box { background: linear-gradient(135deg, #1a1045, #0a2d6e); border-radius: 16px; padding: 32px; text-align: center; margin-top: 32px; }
+        .contact-box a { color: #a0b4ff; font-size: 1.1em; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back">&larr; Back to Home</a>
+        <h1>Support</h1>
+
+        <h2>Frequently Asked Questions</h2>
+
+        <div class="faq">
+            <h3>Where do I get my App Store Connect API credentials?</h3>
+            <p>Go to App Store Connect &rarr; Users and Access &rarr; Integrations &rarr; App Store Connect API. Create a new key with Admin access. You'll need the Key ID, Issuer ID, and the downloaded .p8 private key file.</p>
+        </div>
+
+        <div class="faq">
+            <h3>Is my API key stored securely?</h3>
+            <p>Yes. Your credentials are stored in the macOS Keychain, encrypted at rest. They are never sent anywhere except Apple's App Store Connect API.</p>
+        </div>
+
+        <div class="faq">
+            <h3>Can I use this app with multiple App Store Connect accounts?</h3>
+            <p>Currently the app supports one set of credentials at a time. You can switch credentials via the Settings section.</p>
+        </div>
+
+        <div class="faq">
+            <h3>What is the safeguard password?</h3>
+            <p>The safeguard password is a local password you set during onboarding. It protects dangerous actions like "Submit for Review" from being triggered accidentally. It's stored as a hash locally and never transmitted.</p>
+        </div>
+
+        <div class="faq">
+            <h3>What is the MCP server?</h3>
+            <p>The MCP (Model Context Protocol) server is an optional companion CLI that lets AI coding assistants like Claude Code manage your App Store Connect workflows programmatically. It's distributed separately from the Mac App Store app.</p>
+        </div>
+
+        <div class="faq">
+            <h3>The app shows "Unable to Load Apps"</h3>
+            <p>Check that your API credentials are correct in Settings. Ensure your API key has Admin access and hasn't been revoked in App Store Connect.</p>
+        </div>
+
+        <div class="contact-box">
+            <p>Need more help?</p>
+            <a href="mailto:williamjiamin@gmail.com">williamjiamin@gmail.com</a>
+        </div>
+    </div>
+</body>
+</html>
