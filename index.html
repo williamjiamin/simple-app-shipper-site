@@ -3,72 +3,320 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simple App Shipper - Ship Apps with Confidence</title>
+    <title>Simple App Shipper - Ship Apps to the App Store, Faster</title>
+    <meta name="description" content="The all-in-one macOS app for App Store Connect. Manage metadata, screenshots, TestFlight, reviews, subscriptions, and ship your app — all from one place.">
     <style>
+        :root {
+            --bg: #0a0a0a;
+            --surface: #111;
+            --border: #222;
+            --accent: #00ff66;
+            --accent-dim: #00cc44;
+            --text: #e0e0e0;
+            --muted: #888;
+            --card-bg: #0d0d0d;
+        }
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro', 'Helvetica Neue', sans-serif; background: #0f0f23; color: #e0e0f0; line-height: 1.6; }
-        .hero { text-align: center; padding: 80px 20px 60px; background: linear-gradient(135deg, #1a1045 0%, #2a1565 50%, #0a2d6e 100%); }
-        .hero h1 { font-size: 3em; font-weight: 700; margin-bottom: 16px; background: linear-gradient(90deg, #a0b4ff, #c0a0ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .hero p { font-size: 1.3em; color: #a0a8c0; max-width: 600px; margin: 0 auto 32px; }
-        .badge { display: inline-block; background: #fff; border-radius: 12px; padding: 8px 24px; }
-        .badge img { height: 40px; }
-        .features { max-width: 900px; margin: 60px auto; padding: 0 20px; }
-        .features h2 { text-align: center; font-size: 2em; margin-bottom: 40px; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 24px; }
-        .card { background: #1a1a3e; border: 1px solid #2a2a5e; border-radius: 16px; padding: 24px; }
-        .card h3 { font-size: 1.1em; margin-bottom: 8px; color: #c0c8ff; }
-        .card p { font-size: 0.9em; color: #8890b0; }
-        .footer { text-align: center; padding: 40px 20px; color: #606080; font-size: 0.85em; border-top: 1px solid #1a1a3e; }
-        .footer a { color: #8890c0; text-decoration: none; margin: 0 12px; }
-        .footer a:hover { color: #c0c8ff; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+        }
+        a { color: var(--accent); text-decoration: none; }
+        a:hover { text-decoration: underline; }
+
+        /* Nav */
+        nav {
+            position: fixed; top: 0; width: 100%; z-index: 100;
+            background: rgba(10,10,10,0.85); backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            padding: 12px 40px;
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .nav-brand { font-weight: 700; font-size: 18px; display: flex; align-items: center; gap: 8px; }
+        .nav-brand span { color: var(--accent); }
+        .nav-links { display: flex; gap: 24px; align-items: center; }
+        .nav-links a { color: var(--muted); font-size: 14px; }
+        .nav-links a:hover { color: var(--text); text-decoration: none; }
+        .btn-nav {
+            background: var(--accent); color: #000; font-weight: 600;
+            padding: 8px 20px; border-radius: 8px; font-size: 14px;
+            transition: opacity 0.2s;
+        }
+        .btn-nav:hover { opacity: 0.85; text-decoration: none; }
+
+        /* Hero */
+        .hero {
+            padding: 140px 40px 80px; text-align: center;
+            background: radial-gradient(ellipse at 50% 0%, rgba(0,255,102,0.06) 0%, transparent 60%);
+        }
+        .hero h1 {
+            font-size: 56px; font-weight: 800; letter-spacing: -2px;
+            line-height: 1.1; margin-bottom: 20px;
+            background: linear-gradient(135deg, #fff 0%, var(--accent) 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .hero p { font-size: 20px; color: var(--muted); max-width: 600px; margin: 0 auto 32px; }
+        .hero-buttons { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+        .btn-primary {
+            background: var(--accent); color: #000; font-weight: 700;
+            padding: 14px 32px; border-radius: 12px; font-size: 16px;
+            display: inline-flex; align-items: center; gap: 8px;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 0 30px rgba(0,255,102,0.15);
+        }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 0 40px rgba(0,255,102,0.25); text-decoration: none; }
+        .btn-secondary {
+            background: transparent; color: var(--text); font-weight: 600;
+            padding: 14px 32px; border-radius: 12px; font-size: 16px;
+            border: 1px solid var(--border);
+            display: inline-flex; align-items: center; gap: 8px;
+            transition: border-color 0.2s;
+        }
+        .btn-secondary:hover { border-color: var(--accent); text-decoration: none; }
+        .hero-badge {
+            display: inline-block; background: rgba(0,255,102,0.08); border: 1px solid rgba(0,255,102,0.2);
+            padding: 6px 16px; border-radius: 20px; font-size: 13px; color: var(--accent);
+            margin-bottom: 24px; font-weight: 500;
+        }
+
+        /* Features */
+        .features { padding: 80px 40px; max-width: 1200px; margin: 0 auto; }
+        .features h2 { font-size: 36px; font-weight: 700; text-align: center; margin-bottom: 12px; }
+        .features .subtitle { text-align: center; color: var(--muted); margin-bottom: 48px; font-size: 18px; }
+        .feature-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        .feature-card {
+            background: var(--card-bg); border: 1px solid var(--border);
+            border-radius: 16px; padding: 28px;
+            transition: border-color 0.2s, transform 0.2s;
+        }
+        .feature-card:hover { border-color: var(--accent-dim); transform: translateY(-2px); }
+        .feature-card .icon { font-size: 28px; margin-bottom: 12px; }
+        .feature-card h3 { font-size: 18px; font-weight: 600; margin-bottom: 8px; }
+        .feature-card p { font-size: 14px; color: var(--muted); line-height: 1.5; }
+
+        /* Terminal demo */
+        .terminal-section { padding: 80px 40px; text-align: center; }
+        .terminal-section h2 { font-size: 36px; font-weight: 700; margin-bottom: 12px; }
+        .terminal-section .subtitle { color: var(--muted); margin-bottom: 40px; font-size: 18px; }
+        .terminal-window {
+            max-width: 700px; margin: 0 auto; background: #000;
+            border: 1px solid var(--accent-dim); border-radius: 12px;
+            text-align: left; overflow: hidden;
+            box-shadow: 0 0 60px rgba(0,255,102,0.08);
+        }
+        .terminal-titlebar {
+            background: #111; padding: 10px 16px; border-bottom: 1px solid #222;
+            display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--muted);
+        }
+        .terminal-dot { width: 10px; height: 10px; border-radius: 50%; }
+        .terminal-body { padding: 20px; font-family: 'SF Mono', 'Menlo', monospace; font-size: 13px; line-height: 1.8; }
+        .terminal-body .prompt { color: var(--accent); }
+        .terminal-body .output { color: #aaa; }
+        .terminal-body .success { color: #4ade80; }
+        .terminal-body .info { color: #666; }
+
+        /* Pricing */
+        .pricing { padding: 80px 40px; text-align: center; }
+        .pricing h2 { font-size: 36px; font-weight: 700; margin-bottom: 12px; }
+        .pricing .subtitle { color: var(--muted); margin-bottom: 48px; font-size: 18px; }
+        .pricing-cards { display: flex; gap: 24px; justify-content: center; flex-wrap: wrap; max-width: 800px; margin: 0 auto; }
+        .pricing-card {
+            background: var(--card-bg); border: 1px solid var(--border);
+            border-radius: 16px; padding: 36px; width: 340px; text-align: left;
+        }
+        .pricing-card.featured { border-color: var(--accent); box-shadow: 0 0 40px rgba(0,255,102,0.1); }
+        .pricing-card h3 { font-size: 20px; font-weight: 600; margin-bottom: 4px; }
+        .pricing-card .price { font-size: 42px; font-weight: 800; margin: 16px 0 4px; }
+        .pricing-card .price span { font-size: 16px; font-weight: 400; color: var(--muted); }
+        .pricing-card .period { font-size: 14px; color: var(--muted); margin-bottom: 24px; }
+        .pricing-card ul { list-style: none; margin-bottom: 28px; }
+        .pricing-card li { padding: 6px 0; font-size: 14px; color: var(--muted); }
+        .pricing-card li::before { content: "\2713 "; color: var(--accent); font-weight: 700; margin-right: 8px; }
+        .pricing-card .btn-price {
+            display: block; text-align: center; padding: 14px;
+            border-radius: 10px; font-weight: 600; font-size: 15px;
+            transition: opacity 0.2s;
+        }
+        .pricing-card .btn-price.primary { background: var(--accent); color: #000; }
+        .pricing-card .btn-price.secondary { background: #222; color: var(--text); border: 1px solid #333; }
+
+        /* Footer */
+        footer {
+            padding: 40px; border-top: 1px solid var(--border);
+            display: flex; justify-content: space-between; align-items: center;
+            flex-wrap: wrap; gap: 20px;
+        }
+        footer .copy { font-size: 13px; color: var(--muted); }
+        footer .links { display: flex; gap: 24px; }
+        footer .links a { font-size: 13px; color: var(--muted); }
+
+        /* Agent badge */
+        .agent-badge {
+            display: inline-flex; align-items: center; gap: 6px;
+            background: rgba(0,255,102,0.05); border: 1px solid rgba(0,255,102,0.15);
+            padding: 4px 12px; border-radius: 6px; font-size: 12px; color: var(--accent);
+            font-family: 'SF Mono', monospace;
+        }
+        .agent-badge .dot {
+            width: 6px; height: 6px; border-radius: 50%;
+            background: var(--accent); animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; } 50% { opacity: 0.3; }
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 36px; }
+            .hero p { font-size: 16px; }
+            nav { padding: 12px 20px; }
+            .features, .pricing, .terminal-section { padding: 60px 20px; }
+        }
     </style>
 </head>
 <body>
-    <div class="hero">
-        <h1>Simple App Shipper</h1>
-        <p>The all-in-one Mac app for managing App Store Connect. Metadata, screenshots, subscriptions, TestFlight, reviews, and more.</p>
-        <a href="https://apps.apple.com/app/simple-app-shipper/id0000000000" class="badge" style="color:#000;text-decoration:none;font-weight:600;">
-            Download on the Mac App Store
-        </a>
-    </div>
 
-    <div class="features">
-        <h2>Everything You Need to Ship</h2>
-        <div class="grid">
-            <div class="card">
-                <h3>App Metadata</h3>
-                <p>Edit descriptions, keywords, what's new, and promotional text. Copyright and privacy policy management built in.</p>
-            </div>
-            <div class="card">
-                <h3>Screenshot Studio</h3>
-                <p>Design screenshots with device frames, text overlays, and backgrounds. Upload directly to App Store Connect.</p>
-            </div>
-            <div class="card">
-                <h3>Subscription Validation</h3>
-                <p>Pre-flight checks catch missing localizations, pricing gaps, and review asset issues before you submit.</p>
-            </div>
-            <div class="card">
-                <h3>TestFlight Management</h3>
-                <p>Manage beta groups, add testers via CSV, and monitor build processing status.</p>
-            </div>
-            <div class="card">
-                <h3>Customer Reviews</h3>
-                <p>Read and respond to customer reviews. Review summarization shows rating distribution and sentiment at a glance.</p>
-            </div>
-            <div class="card">
-                <h3>Agent-Friendly</h3>
-                <p>Built-in MCP server lets AI agents like Claude Code manage your apps programmatically. Human confirms, agent executes.</p>
-            </div>
+<nav>
+    <div class="nav-brand"><span>&gt;</span> Simple App Shipper</div>
+    <div class="nav-links">
+        <a href="#features">Features</a>
+        <a href="#agent">AI Agent</a>
+        <a href="#pricing">Pricing</a>
+        <a href="privacy.html">Privacy</a>
+        <a href="#pricing" class="btn-nav">Download</a>
+    </div>
+</nav>
+
+<section class="hero">
+    <div class="hero-badge">Now with built-in AI Agent API</div>
+    <h1>Ship your app to the<br>App Store, faster.</h1>
+    <p>The all-in-one macOS app for App Store Connect. Metadata, screenshots, TestFlight, reviews, subscriptions, ASO — managed from one place.</p>
+    <div class="hero-buttons">
+        <a href="#pricing" class="btn-primary">Download for Mac</a>
+        <a href="#features" class="btn-secondary">See Features</a>
+    </div>
+</section>
+
+<section class="features" id="features">
+    <h2>Everything you need to ship</h2>
+    <p class="subtitle">Replace 6+ browser tabs with one native macOS app.</p>
+    <div class="feature-grid">
+        <div class="feature-card">
+            <div class="icon">&#128247;</div>
+            <h3>Screenshot Studio</h3>
+            <p>Design App Store screenshots with device frames, text overlays, and backgrounds. Capture directly from the iOS Simulator.</p>
+        </div>
+        <div class="feature-card">
+            <div class="icon">&#127916;</div>
+            <h3>Video Preview Composer</h3>
+            <p>Create device-framed App Store preview videos with zoom, rotation, background music, and voiceover. Export at exact Apple specs.</p>
+        </div>
+        <div class="feature-card">
+            <div class="icon">&#128196;</div>
+            <h3>Metadata & Localization</h3>
+            <p>Edit descriptions, keywords, what's new, and promotional text across all locales. CSV import/export. Localization auditor built in.</p>
+        </div>
+        <div class="feature-card">
+            <div class="icon">&#9992;&#65039;</div>
+            <h3>TestFlight Management</h3>
+            <p>Manage beta groups, add/remove testers, CSV import/export. Distribute builds and manage beta review submissions.</p>
+        </div>
+        <div class="feature-card">
+            <div class="icon">&#128176;</div>
+            <h3>In-App Purchases & Subs</h3>
+            <p>Create and manage consumables, non-consumables, and auto-renewable subscriptions. Promo code tracking included.</p>
+        </div>
+        <div class="feature-card">
+            <div class="icon">&#11088;</div>
+            <h3>Reviews & Sentiment</h3>
+            <p>Read and respond to customer reviews. Sentiment analysis, rating trends, and review templates for fast responses.</p>
+        </div>
+        <div class="feature-card">
+            <div class="icon">&#128200;</div>
+            <h3>ASO Research</h3>
+            <p>Research keyword popularity and difficulty using public iTunes Search data. Competitor keyword gap analysis. Rank tracking.</p>
+        </div>
+        <div class="feature-card">
+            <div class="icon">&#128640;</div>
+            <h3>Release Flightpath</h3>
+            <p>Pre-release checklist with blocking/advisory items. Pipeline overview, category grouping, and target date countdown.</p>
+        </div>
+        <div class="feature-card">
+            <div class="icon">&#128737;&#65039;</div>
+            <h3>Provisioning</h3>
+            <p>Manage devices, certificates, bundle IDs, and provisioning profiles. All from the app — no Apple Developer portal needed.</p>
         </div>
     </div>
+</section>
 
-    <div class="footer">
-        <p>&copy; 2026 William Jiamin. All rights reserved.</p>
-        <p>
-            <a href="privacy.html">Privacy Policy</a>
-            <a href="support.html">Support</a>
-            <a href="terms.html">Terms of Use</a>
-        </p>
+<section class="terminal-section" id="agent">
+    <h2>Built for AI Agents</h2>
+    <p class="subtitle">External AI agents control the app via a localhost API. See every change in real time.</p>
+    <div style="margin-bottom: 20px;">
+        <span class="agent-badge"><span class="dot"></span> Agent API on localhost:29117</span>
     </div>
+    <div class="terminal-window">
+        <div class="terminal-titlebar">
+            <div class="terminal-dot" style="background:#ff5f57"></div>
+            <div class="terminal-dot" style="background:#ffbd2e"></div>
+            <div class="terminal-dot" style="background:#28c840"></div>
+            <span style="margin-left: 8px;">Terminal &mdash; Agent Activity</span>
+        </div>
+        <div class="terminal-body">
+            <div><span class="prompt">asc &rsaquo;</span> apps list</div>
+            <div class="output">&nbsp; 6482910234 &nbsp;Simple AR Translator &nbsp;[com.williamjiamin.Simple-AR-Translator]</div>
+            <div class="output">&nbsp; 6511037281 &nbsp;Simple Vibrator AI &nbsp;&nbsp;[com.williamjiamin.Simple-Vibrator-AI]</div>
+            <div><span class="prompt">asc &rsaquo;</span> reviews list --limit 3</div>
+            <div class="output">&nbsp; &#9733;&#9733;&#9733;&#9733;&#9733; &nbsp;Love this app! &mdash; happyUser42</div>
+            <div class="output">&nbsp; &#9733;&#9733;&#9733;&#9733;&#9734; &nbsp;Great but needs dark mode &mdash; devFan</div>
+            <div><span class="success">+ [AGENT] GET /api/metadata &rarr; 200 (340ms)</span></div>
+            <div class="info">&nbsp; Fetched metadata for version 2.1.0</div>
+            <div><span class="success">+ [AGENT] GET /api/reviews &rarr; 200 (520ms)</span></div>
+            <div class="info">&nbsp; Listed 20 reviews for app Simple AR Translator</div>
+        </div>
+    </div>
+</section>
+
+<section class="pricing" id="pricing">
+    <h2>Simple pricing</h2>
+    <p class="subtitle">One-time purchase. No subscription. Free updates.</p>
+    <div class="pricing-cards">
+        <div class="pricing-card featured">
+            <h3>Simple App Shipper</h3>
+            <div class="price">$29<span>.99</span></div>
+            <div class="period">One-time purchase</div>
+            <ul>
+                <li>All features included</li>
+                <li>Unlimited apps</li>
+                <li>Built-in AI Agent API</li>
+                <li>Screenshot & Video Composer</li>
+                <li>Simulator capture</li>
+                <li>ASO research engine</li>
+                <li>TestFlight management</li>
+                <li>IAP & subscription tools</li>
+                <li>Free updates</li>
+            </ul>
+            <!-- Replace YOUR_STRIPE_PRICE_ID with actual Stripe price -->
+            <a href="#" id="buy-btn" class="btn-price primary" onclick="alert('Stripe checkout will be configured here. Set your STRIPE_PRICE_ID.')">Buy Now</a>
+        </div>
+    </div>
+    <p style="margin-top: 24px; font-size: 13px; color: var(--muted);">
+        Also available on the <a href="#">Mac App Store</a> (coming soon)
+    </p>
+</section>
+
+<footer>
+    <div class="copy">&copy; 2026 William Jiamin. All rights reserved.</div>
+    <div class="links">
+        <a href="privacy.html">Privacy Policy</a>
+        <a href="support.html">Support</a>
+        <a href="https://github.com/williamjiamin/SimpleAppShipper">GitHub</a>
+    </div>
+</footer>
+
 </body>
 </html>
